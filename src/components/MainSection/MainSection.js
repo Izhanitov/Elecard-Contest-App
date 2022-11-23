@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 
-import RestService from "../../services/RestService/RestService";
-import CardsView from "../CardsView/CardsView";
-import TreeView from "../TreeView/TreeView";
-import Spinner from "../Spinner/Spinner";
+import RestService from "../../services/restService/restService";
+import CardsView from "../сardsView/сardsView";
+import TreeView from "../treeView/treeView";
+import Spinner from "../spinner/spinner";
 
 const MainSection = () => {
     const restSerice = new RestService();
@@ -20,7 +20,7 @@ const MainSection = () => {
         .catch();
     }, [])
 
-    const SwitchRadio = (event) => {
+    const SwitchView = (event) => {
         switch(event.target.id) {
             case "card":
                 setView("card")
@@ -35,8 +35,8 @@ const MainSection = () => {
 
     return !isLoaded ? <Spinner /> : (
         <div>
-            <input id="card" name="content-radio" onClick={SwitchRadio} type="radio" checked={view === 'card'}/>Карточки
-            <input id="tree" name="content-radio" onClick={SwitchRadio} type="radio" checked={view === 'tree'}/>Дерево            
+            <input id="card" name="content-radio" onClick={SwitchView} type="radio" checked={view === 'card'}/>Карточки
+            <input id="tree" name="content-radio" onClick={SwitchView} type="radio" checked={view === 'tree'}/>Дерево            
             {view === "card" && <CardsView data={cardsData} />}
             {view === "tree" && <TreeView data={cardsData} />}            
         </div>     
