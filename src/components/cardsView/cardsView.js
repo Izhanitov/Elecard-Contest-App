@@ -9,7 +9,7 @@ const CardsView = ({ data }) => {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [hiddenNames, setHiddenNames] = useState([]);
 
-	const pagination = usePagination(cardsData.length - hiddenNames.length, 50);
+	const pagination = usePagination(cardsData.length - hiddenNames.length, 51);
 
 
 
@@ -29,7 +29,7 @@ const CardsView = ({ data }) => {
 				const visible = checkLocalStorage(image);
 
 				return {
-					name: image,
+					name: image.split('/').pop(),
 					filesize,
 					timestamp,
 					category,
@@ -153,8 +153,8 @@ const CardsView = ({ data }) => {
 				<div className="text-center">{renderPageSelector()}</div>
 			</div>
 			<div>	
-				<div className="row">
-					<CardsViewPage itemsSet={itemsToView} HideCard={hideCard} />
+				<div className="d-flex flex-wrap" style={{"justifyContent" : "center"}}>
+					<CardsViewPage itemsSet={itemsToView} hideCard={hideCard} />
 				</div>
 			</div>
 		</>
