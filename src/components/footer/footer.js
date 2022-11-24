@@ -1,8 +1,8 @@
 const Footer = () => {
     return (
-        <footer className="footer mt-auto py-3">
+        <div style={{position: "static"}}>
             <p>2022</p>
-        </footer>
+        </div>
     )
 }
 
