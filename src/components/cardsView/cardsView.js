@@ -1,22 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import Spinner from "../spinner/spinner";
+import usePagination from "../usePagination/usePagination";
+import CardsViewPage from "../cardsViewPage/cardsViewPage";
 
 const CardsView = ({ data }) => {
 	const [cardsData, setCardsData] = useState([]);
 	const [isLoaded, setIsLoaded] = useState(false);
-	const [pages, setPages] = useState(0);
-	const [currentPage, setCurrentPage] = useState(1);
+	const [hiddenNames, setHiddenNames] = useState([]);
+
+	const pagination = usePagination(cardsData.length - hiddenNames.length, 50);
+
+
+
+	const itemsToView = useMemo(
+		() => cardsData.filter(item => !hiddenNames.some(hidden => item.name === hidden)).slice(pagination.firstIndex, pagination.lastIndex + 1),
+		[hiddenNames, pagination]
+	);
 
 	useEffect(() => {
-		CreateCardsData(data);
+		createCardsData(data);
 	}, [data]);
 
-	const CreateCardsData = (cards) => {
+	const createCardsData = (cards) => {
 		setCardsData(
 			cards.map((card) => {
 				const { image, filesize, timestamp, category } = card;
-				const visible = CheckLocalStorage(image);
+				const visible = checkLocalStorage(image);
 
 				return {
 					name: image,
@@ -30,11 +40,8 @@ const CardsView = ({ data }) => {
 		setIsLoaded(true);
 	};
 
-	const Pagination = () => {
-		setPages(Math.floor(cardsData.length + 50 - 1 / 50));
-	};
-
-	const ResetCardsVisible = () => {
+	const resetCardsVisible = () => {
+		setHiddenNames([]);
 		setCardsData(
 			cardsData.map((card) => {
 				localStorage.setItem(card.name, true);
@@ -43,11 +50,12 @@ const CardsView = ({ data }) => {
 		);
 	};
 
-	const HideCard = (event) => {
+	const hideCard = (event) => {
 		setCardsData(
 			cardsData.map((card) => {
 				if (card.name === event.target.id) {
 					card.visible = "false";
+					setHiddenNames([...hiddenNames, card.name]);
 					localStorage.setItem(card.name, false);
 					return { ...card, visible: "false" };
 				}
@@ -56,32 +64,31 @@ const CardsView = ({ data }) => {
 		);
 	};
 
-	useEffect(() => console.log(cardsData), [cardsData]);
-
-	const CheckLocalStorage = (cardName) => {
+	const checkLocalStorage = (cardName) => {
 		if (!localStorage.getItem(cardName)) {
 			localStorage.setItem(cardName, true);
 			return true;
 		} else return localStorage.getItem(cardName);
 	};
 
-	const RenderCards = () => {
-		return cardsData
-			.filter((item) => item.visible === "true")
-			.map((item) => (
-				<div key={item.name} className="col">
-					<button id={item.name} onClick={HideCard}>
-						X
-					</button>
-					<img
-						src={`http://contest.elecard.ru/frontend_data/${item.name}`}
-						alt={item.name}
-					/>
-				</div>
-			));
+	const renderPageSelector = () => {		
+		const pages = [];
+		for (let i = 0; i < pagination.pages; i++) {
+			pages.push(i + 1);
+		}
+		return pages.map((page) => (
+			
+			<button id={page} className={page === parseInt(pagination.currentPage) ? "btn btn-primary" : "btn btn-outline-info"} onClick={selectPage}>
+				{page}
+			</button>
+		));
 	};
 
-	const SortCardsData = (type) => {
+	const selectPage = (event) => {
+		pagination.selectPage(event.target.id);
+	};
+
+	const sortCardsData = (type) => {
 		let newT = [].concat(cardsData);
 
 		switch (type) {
@@ -105,40 +112,52 @@ const CardsView = ({ data }) => {
 		setCardsData(newT);
 	};
 
-	const SwitchSort = (event) => {
-		SortCardsData(event.target.id);
+	const switchSort = (event) => {
+		sortCardsData(event.target.id);
 	};
 
 	return !isLoaded ? (
 		<Spinner />
 	) : (
-		<div>
-			<button onClick={ResetCardsVisible}>Показать скрытые</button>
-			<input
-				id="category"
-				name="filter-radio"
-				onClick={SwitchSort}
-				type="radio"
-			/>
-			Категория
-			<input
-				id="timestamp"
-				name="filter-radio"
-				onClick={SwitchSort}
-				type="radio"
-			/>
-			Дата
-			<input id="name" name="filter-radio" onClick={SwitchSort} type="radio" />
-			Название
-			<input
-				id="filesize"
-				name="filter-radio"
-				onClick={SwitchSort}
-				type="radio"
-			/>
-			Размер
-			<div className="row">{RenderCards()}</div>
-		</div>
+		<>
+			<div>
+				<button
+					className="btn btn-outline-secondary btn-sm"
+					onClick={resetCardsVisible}
+				>
+					Показать скрытые
+				</button>
+				<input
+					id="category"
+					name="filter-radio"
+					onClick={switchSort}
+					type="radio"
+				/>
+				Категория
+				<input
+					id="timestamp"
+					name="filter-radio"
+					onClick={switchSort}
+					type="radio"
+				/>
+				Дата
+				<input id="name" name="filter-radio" onClick={switchSort} type="radio" />
+				Название
+				<input
+					id="filesize"
+					name="filter-radio"
+					onClick={switchSort}
+					type="radio"
+				/>
+				Размер
+				<div className="text-center">{renderPageSelector()}</div>
+			</div>
+			<div>	
+				<div className="row">
+					<CardsViewPage itemsSet={itemsToView} HideCard={hideCard} />
+				</div>
+			</div>
+		</>
 	);
 };
 
