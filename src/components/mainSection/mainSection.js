@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import RestService from "../../services/restService/restService";
 import CardsView from "../cardsView/cardsView";
-import TreeView from "../treeView/treeView";
+import TreeView from "../treeView/view/treeView";
 import Spinner from "../spinner/spinner";
 
 const MainSection = () => {
@@ -11,14 +11,29 @@ const MainSection = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [view, setView] = useState("card");
     
-    const [cardsData, setCardsData] = useState();
+    const [dataImages, setDataImages] = useState();
 
     useEffect(() => {
         restSerice.getCards()
-        .then(setCardsData)
+        .then(createDataSet)
         .then(() => setIsLoaded(true))
         .catch();
     }, [])
+
+    const createDataSet = (data) => {
+        setDataImages(
+			data.map((card) => {
+				const { image, filesize, timestamp, category } = card;
+
+				return {
+					name: image.split('/').pop(),
+					filesize,
+					timestamp,
+					category
+				};
+			})
+		);
+    }
 
     const SwitchView = (event) => {
         switch(event.target.id) {
@@ -42,9 +57,8 @@ const MainSection = () => {
                 <label className="btn btn-light" htmlFor="tree">Дерево</label>            
             </div>
             <div>
-                {view === "card" && <CardsView data={cardsData} />}
-                {view === "tree" && <TreeView data={cardsData} />}  
-
+                {view === "card" && <CardsView data={dataImages} />}
+                {view === "tree" && <TreeView data={dataImages} />}
             </div> 
         </>    
     )
