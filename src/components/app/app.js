@@ -8,13 +8,13 @@ export default class App extends Component {
     render() {
         return (
             <>
-                <header>
+                <header className="fixed-top w-5 bg-primary bg-gradient shadow-sm">
                     <Header />
                 </header>
-                
-                <MainSection />
-                
-                <footer>
+                <section className="mt-5 ms-1 me-1 mb-5">
+                    <MainSection />
+                </section>                
+                <footer className="fixed-bottom bg-light bg-gradient shadow-sm border-top border-secondary">
                     <Footer />
                 </footer>
             </>
