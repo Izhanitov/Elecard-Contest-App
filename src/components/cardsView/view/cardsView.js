@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 
-import Spinner from "../spinner/spinner";
-import usePagination from "../usePagination/usePagination";
+import Spinner from "../../spinner/spinner";
+import usePagination from "../../usePagination/usePagination";
 import CardsViewPage from "../cardsViewPage/cardsViewPage";
 
 const CardsView = ({ data }) => {
@@ -13,7 +13,7 @@ const CardsView = ({ data }) => {
 
 	const itemsToView = useMemo(
 		() => cardsData.filter(item => !hiddenNames.some(hidden => item.name === hidden)).slice(pagination.firstIndex, pagination.lastIndex + 1),
-		[hiddenNames, pagination, cardsData]
+		[hiddenNames, pagination.firstIndex, pagination.lastIndex, cardsData]
 	)
 
 	useEffect(() => {
@@ -52,27 +52,27 @@ const CardsView = ({ data }) => {
 	}, [pagination, selectPage])
 
 	const sortCardsData = useCallback((type) => {
-		let newT = [].concat(cardsData);
+		const orderedCards = [].concat(cardsData);
 
 		switch (type) {
 			case "category":
-				newT.sort((a, b) =>
+				orderedCards.sort((a, b) =>
 					a.category > b.category ? 1 : b.category > a.category ? -1 : 0
 				);
 				break;
 			case "timestamp":
-				newT.sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp));
+				orderedCards.sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp));
 				break;
 			case "name":
-				newT.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+				orderedCards.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
 				break;
 			case "filesize":
-				newT.sort((a, b) => parseInt(a.filesize) - parseInt(b.filesize));
+				orderedCards.sort((a, b) => parseInt(a.filesize) - parseInt(b.filesize));
 				break;
 			default:
 				break;
 		}
-		setCardsData(newT);
+		setCardsData(orderedCards);
 	}, [cardsData])
 
 	const switchSort = useCallback((event) => {

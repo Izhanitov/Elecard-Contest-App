@@ -10,7 +10,7 @@ const CardItem = ({item, hideCard}) => {
             
             <div key={item.name} className="content-card">                
                 <div className="content-card-nav">
-                    <button id={item.name} onClick={hideCard} className="content-card-close-btn">&times;</button>   
+                    <button id={item.name} onClick={hideCard} className="btn-close b">&times;</button>   
                 </div>
                                  
                 <div className="content-card-topside">
