@@ -1,41 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 import RestService from "../../services/restService/restService";
-import CardsView from "../cardsView/cardsView";
+import CardsView from "../cardsView/view/cardsView";
 import TreeView from "../treeView/view/treeView";
 import Spinner from "../spinner/spinner";
 
 const MainSection = () => {
-    const restSerice = new RestService();
+    const restService = useMemo(() => new RestService(), [])
 
     const [isLoaded, setIsLoaded] = useState(false);
     const [view, setView] = useState("card");
     
-    const [dataImages, setDataImages] = useState();
+    const [imagesData, setImagesData] = useState();
 
-    useEffect(() => {
-        restSerice.getCards()
-        .then(createDataSet)
-        .then(() => setIsLoaded(true))
-        .catch();
+    const createDataSet = useCallback((data) => {
+        const dataSet = data.map((card) => {
+            const { image, filesize, timestamp, category } = card;
+
+            return {
+                name: image.split('/').pop(),
+                filesize,
+                timestamp,
+                category
+            }
+        });
+        
+        setImagesData(dataSet);
     }, [])
 
-    const createDataSet = (data) => {
-        setDataImages(
-			data.map((card) => {
-				const { image, filesize, timestamp, category } = card;
+    useEffect(() => {
+        restService.getCards()
+        .then(createDataSet)
+        .then(() => setIsLoaded(true))
+        .catch((message) => console.log(message));
+    }, [createDataSet, restService])    
 
-				return {
-					name: image.split('/').pop(),
-					filesize,
-					timestamp,
-					category
-				};
-			})
-		);
-    }
-
-    const SwitchView = (event) => {
+    const SwitchView = useCallback((event) => {
         switch(event.target.id) {
             case "card":
                 setView("card")
@@ -46,7 +46,7 @@ const MainSection = () => {
             default:
                 break;                
         }
-    }
+    }, [])
 
     return !isLoaded ? <Spinner /> : (
         <>
@@ -57,8 +57,8 @@ const MainSection = () => {
                 <label className="btn btn-light" htmlFor="tree">Дерево</label>            
             </div>
             <div>
-                {view === "card" && <CardsView data={dataImages} />}
-                {view === "tree" && <TreeView data={dataImages} />}
+                {view === "card" && <CardsView data={imagesData} />}
+                {view === "tree" && <TreeView data={imagesData} />}
             </div> 
         </>    
     )
