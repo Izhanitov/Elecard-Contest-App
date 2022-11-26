@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 import Spinner from "../spinner/spinner";
 import usePagination from "../usePagination/usePagination";
@@ -9,69 +9,36 @@ const CardsView = ({ data }) => {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [hiddenNames, setHiddenNames] = useState([]);
 
-	const pagination = usePagination(cardsData.length - hiddenNames.length, 51);
-
-
+	const pagination = usePagination(data.length - hiddenNames.length, 51);
 
 	const itemsToView = useMemo(
 		() => cardsData.filter(item => !hiddenNames.some(hidden => item.name === hidden)).slice(pagination.firstIndex, pagination.lastIndex + 1),
-		[hiddenNames, pagination]
-	);
+		[hiddenNames, pagination, cardsData]
+	)
 
 	useEffect(() => {
-		createCardsData(data);
-	}, [data]);
-
-	const createCardsData = (cards) => {
-		setCardsData(
-			cards.map((card) => {
-				const { image, filesize, timestamp, category } = card;
-				const visible = checkLocalStorage(image);
-
-				return {
-					name: image.split('/').pop(),
-					filesize,
-					timestamp,
-					category,
-					visible,
-				};
-			})
-		);
+		localStorage.hiddenNames ? 
+			setHiddenNames(JSON.parse(localStorage.hiddenNames)) : localStorage.hiddenNames = "";
+		setCardsData(data);
 		setIsLoaded(true);
-	};
+	}, [data])	
 
-	const resetCardsVisible = () => {
+	const resetCardsVisible = useCallback(() => {
 		setHiddenNames([]);
-		setCardsData(
-			cardsData.map((card) => {
-				localStorage.setItem(card.name, true);
-				return { ...card, visible: "true" };
-			})
-		);
-	};
+		localStorage.hiddenNames = "";
+	}, [])
 
-	const hideCard = (event) => {
-		setCardsData(
-			cardsData.map((card) => {
-				if (card.name === event.target.id) {
-					card.visible = "false";
-					setHiddenNames([...hiddenNames, card.name]);
-					localStorage.setItem(card.name, false);
-					return { ...card, visible: "false" };
-				}
-				return card;
-			})
-		);
-	};
-
-	const checkLocalStorage = (cardName) => {
-		if (!localStorage.getItem(cardName)) {
-			localStorage.setItem(cardName, true);
-			return true;
-		} else return localStorage.getItem(cardName);
-	};
-
-	const renderPageSelector = () => {		
+	const hideCard = useCallback((event) => {
+		const hiddenArr = [...hiddenNames, event.target.id];
+		setHiddenNames([...hiddenNames, event.target.id]);
+		localStorage.hiddenNames = JSON.stringify(hiddenArr);
+	}, [hiddenNames]);
+	
+	const selectPage = useCallback((event) => {
+		pagination.selectPage(event.target.id);
+	}, [pagination])
+	
+	const renderPageSelector = useCallback(() => {		
 		const pages = [];
 		for (let i = 0; i < pagination.pages; i++) {
 			pages.push(i + 1);
@@ -82,13 +49,9 @@ const CardsView = ({ data }) => {
 				{page}
 			</button>
 		));
-	};
+	}, [pagination, selectPage])
 
-	const selectPage = (event) => {
-		pagination.selectPage(event.target.id);
-	};
-
-	const sortCardsData = (type) => {
+	const sortCardsData = useCallback((type) => {
 		let newT = [].concat(cardsData);
 
 		switch (type) {
@@ -110,15 +73,13 @@ const CardsView = ({ data }) => {
 				break;
 		}
 		setCardsData(newT);
-	};
+	}, [cardsData])
 
-	const switchSort = (event) => {
+	const switchSort = useCallback((event) => {
 		sortCardsData(event.target.id);
-	};
+	}, [sortCardsData])
 
-	return !isLoaded ? (
-		<Spinner />
-	) : (
+	return !isLoaded ? <Spinner /> : (
 		<>
 			<div>
 				<button
@@ -158,7 +119,7 @@ const CardsView = ({ data }) => {
 				</div>
 			</div>
 		</>
-	);
-};
+	)
+}
 
 export default CardsView;
