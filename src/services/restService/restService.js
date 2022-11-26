@@ -7,7 +7,7 @@ export default class RestService {
         const res = await fetch(`${this._apiBase}${url}`);
 
         if (!res.ok) {
-            throw new Error('Counld not fetch $(url)');
+            throw new Error('Could not fetch $(url)');
         }
 
         return await res.json();
