@@ -17,10 +17,16 @@ const CardsView = ({ data }) => {
 	)
 
 	useEffect(() => {
-		localStorage.hiddenNames ? 
-			setHiddenNames(JSON.parse(localStorage.hiddenNames)) : localStorage.hiddenNames = "";
-		setCardsData(data);
-		setIsLoaded(true);
+		try {
+			setHiddenNames(JSON.parse(localStorage.hiddenNames)); 
+		}
+		catch(err) {
+			localStorage.hiddenNames = "";
+		}
+		finally {
+			setCardsData(data);
+			setIsLoaded(true);
+		}
 	}, [data])	
 
 	useEffect(() => {
