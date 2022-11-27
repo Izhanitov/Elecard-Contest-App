@@ -23,16 +23,29 @@ const CardsView = ({ data }) => {
 		setIsLoaded(true);
 	}, [data])	
 
+	useEffect(() => {
+		if(isLoaded) {
+			sortCardsData("name");
+		}
+	}, [isLoaded])
+
 	const resetCardsVisible = useCallback(() => {
 		setHiddenNames([]);
 		localStorage.hiddenNames = "";
 	}, [])
 
 	const hideCard = useCallback((event) => {
-		const hiddenArr = [...hiddenNames, event.target.id];
-		setHiddenNames([...hiddenNames, event.target.id]);
-		localStorage.hiddenNames = JSON.stringify(hiddenArr);
-	}, [hiddenNames]);
+		const element = document.getElementById(`card-item-${event.target.id}`);
+		const duration = 500;
+		if (element) {
+			element.animate({opacity: "0",}, { duration, fill: "forwards", }
+		)
+
+		setTimeout(() => {
+			const hiddenArr = [...hiddenNames, event.target.id];
+			setHiddenNames([...hiddenNames, event.target.id]);
+			localStorage.hiddenNames = JSON.stringify(hiddenArr);
+		}, duration)}}, [hiddenNames]);
 	
 	const selectPage = useCallback((event) => {
 		pagination.selectPage(event.target.id);
@@ -45,7 +58,7 @@ const CardsView = ({ data }) => {
 		}
 		return pages.map((page) => (
 			
-			<button id={page} className={page === parseInt(pagination.currentPage) ? "btn btn-primary" : "btn btn-outline-info"} onClick={selectPage}>
+			<button key={page} id={page} className={page === parseInt(pagination.currentPage) ? "btn btn-primary" : "btn btn-outline-info"} onClick={selectPage}>
 				{page}
 			</button>
 		));
@@ -81,38 +94,52 @@ const CardsView = ({ data }) => {
 
 	return !isLoaded ? <Spinner /> : (
 		<>
-			<div>
+			<div className="mt-2 d-flex justify-content-around">
 				<button
-					className="btn btn-outline-secondary btn-sm"
+					className="btn btn-outline-secondary btn-sm ms-1"
 					onClick={resetCardsVisible}
 				>
 					Показать скрытые
 				</button>
-				<input
-					id="category"
-					name="filter-radio"
-					onClick={switchSort}
-					type="radio"
-				/>
-				Категория
-				<input
-					id="timestamp"
-					name="filter-radio"
-					onClick={switchSort}
-					type="radio"
-				/>
-				Дата
-				<input id="name" name="filter-radio" onClick={switchSort} type="radio" />
-				Название
-				<input
-					id="filesize"
-					name="filter-radio"
-					onClick={switchSort}
-					type="radio"
-				/>
-				Размер
-				<div className="text-center">{renderPageSelector()}</div>
+				<div className="d-flex align-items-center">Сортировать
+					<div className="mt-1 ms-1">
+						<input
+							className="btn-check"
+							id="category"
+							name="filter-radio"
+							onClick={switchSort}
+							type="radio"							
+						/>
+						<label className="btn btn-primary me-1" htmlFor="category">Категория</label>
+						<input
+							className="btn-check"
+							id="timestamp"
+							name="filter-radio"
+							onClick={switchSort}
+							type="radio"
+						/>
+						<label className="btn btn-primary me-1" htmlFor="timestamp">Дата</label>
+						<input 
+							className="btn-check"
+							id="name" 
+							name="filter-radio" 
+							onClick={switchSort} 
+							type="radio"
+							defaultChecked
+						/>
+						<label className="btn btn-primary me-1" htmlFor="name">Название</label>
+						<input
+							className="btn-check"
+							id="filesize"
+							name="filter-radio"
+							onClick={switchSort}
+							type="radio"						
+						/>
+						<label className="btn btn-primary" htmlFor="filesize">Размер</label>
+					</div>	
+				</div>	
 			</div>
+			<div className="text-center d-block m-2">{renderPageSelector()}</div>
 			<div>	
 				<div className="d-flex flex-wrap" style={{"justifyContent" : "center"}}>
 					<CardsViewPage itemsSet={itemsToView} hideCard={hideCard} />

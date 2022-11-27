@@ -8,9 +8,9 @@ const CardItem = ({item, hideCard}) => {
     const renderItem = () => {
         return(
             
-            <div key={item.name} className="content-card">                
+            <div id={`card-item-${item.name}`} className="content-card">                
                 <div className="content-card-nav">
-                    <button id={item.name} onClick={hideCard} className="btn-close b">&times;</button>   
+                    <button id={item.name} onClick={hideCard} className="btn-close b bg-light"></button>   
                 </div>
                                  
                 <div className="content-card-topside">
