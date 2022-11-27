@@ -6,15 +6,15 @@ const CategoryNode = ({categoryName, thumbnailItems, expandFunc, checkExpand, ca
 
     const renderCategoryNode = useCallback(() => {
         return (
-            <div className="d-block">                
+            <div className="d-block ms-2">                
                 <div className="d-flex">
-                    <button id={categoryName} onClick={expandFunc}>{checkExpand ? "-" : "+"}</button>
-                    <h4>{categoryName}</h4>
+                    <button className={"tree-button"} id={categoryName} onClick={expandFunc}>{checkExpand ? "-" : "+"}</button>
+                    <div>{categoryName}</div>
                 </div>
                 {checkExpand ? 
-                    <div className="d-block">
+                    <div className="row ms-2" >
                         {thumbnailItems.filter(item => item.category === categoryName).map(item => {
-                            return (<ThumbnailNode item={item} callModal={callModal}/>)
+                            return (<div className="col"><ThumbnailNode item={item} callModal={callModal}/></div>)
                             })}
                     </div> : <></>
                 }

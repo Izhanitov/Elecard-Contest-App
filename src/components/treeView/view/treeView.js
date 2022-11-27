@@ -41,9 +41,11 @@ const TreeView = ({data}) => {
 
     const renderTree = useCallback(() => {        
         return(
-            <div>
-                <button id="root" onClick={expandRoot}>{rootPosition ? "-" : "+"}</button>
-                <div></div>
+            <div className="ms-2 me-2">
+                <div className="d-flex">
+                    <button id="root" className="tree-button" onClick={expandRoot}>{rootPosition ? "-" : "+"}</button>
+                    <div>Root</div>
+                </div>
                 {rootPosition ? renderChildNode() : <></>}
             </div>
 
@@ -53,7 +55,7 @@ const TreeView = ({data}) => {
     return !isLoaded ? <Spinner /> : (
         <>
             {renderTree()}
-            {modalProps && <ImageModal item={modalProps}/>}
+            {modalProps && <ImageModal item={modalProps} onClose={() => setModalProps(undefined)} />}
         </>
     )
 }
