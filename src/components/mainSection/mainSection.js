@@ -4,24 +4,35 @@ import RestService from "../../services/restService/restService";
 import CardsView from "../cardsView/view/cardsView";
 import TreeView from "../treeView/view/treeView";
 import Spinner from "../spinner/spinner";
+import ErrorComponent from "../errorComponent/errorComponent";
 
 const MainSection = () => {
     const restService = useMemo(() => new RestService(), [])
 
     const [isLoaded, setIsLoaded] = useState(false);
     const [view, setView] = useState("card");
-    
+    const [isError, setIsError] = useState(false);
     const [imagesData, setImagesData] = useState();
 
     const createDataSet = useCallback((data) => {
         const dataSet = data.map((card) => {
-            const { image, filesize, timestamp, category } = card;
-
-            return {
-                name: image.split('/').pop(),
-                filesize,
-                timestamp,
-                category
+            if (
+                card &&
+                card.image &&
+                card.filesize &&
+                card.timestamp &&
+                card.category
+            ) {
+                const { image, filesize, timestamp, category } = card;
+                setIsError(false);
+                return {
+                    name: image.split('/').pop(),
+                    filesize,
+                    timestamp,
+                    category
+                }
+            } else {
+                throw new Error("Response does not contain valid data");
             }
         });
         
@@ -32,7 +43,7 @@ const MainSection = () => {
         restService.getCards()
         .then(createDataSet)
         .then(() => setIsLoaded(true))
-        .catch((message) => console.log(message));
+        .catch(setIsError(true));
     }, [createDataSet, restService])    
 
     const SwitchView = useCallback((event) => {
@@ -48,20 +59,20 @@ const MainSection = () => {
         }
     }, [])
 
-    return !isLoaded ? <Spinner /> : (
+    return isError ? <ErrorComponent /> : (!isLoaded ? <Spinner /> : (
         <>
-            <div>
-                <input id="card" className="btn-check" name="content-radio" onClick={SwitchView} type="radio" checked={view === 'card'}/>
+            <div className="text-center">
+                <input id="card" className="btn-check" name="content-radio" onClick={SwitchView} type="radio" defaultChecked/>
                 <label className="btn btn-light" htmlFor="card">Карточки</label>
-                <input id="tree" className="btn-check" name="content-radio" onClick={SwitchView} type="radio" checked={view === 'tree'}/>
+                <input id="tree" className="btn-check" name="content-radio" onClick={SwitchView} type="radio" />
                 <label className="btn btn-light" htmlFor="tree">Дерево</label>            
             </div>
             <div>
                 {view === "card" && <CardsView data={imagesData} />}
                 {view === "tree" && <TreeView data={imagesData} />}
             </div> 
-        </>    
-    )
+        </>   
+    ))
 }
 
 export default MainSection;
