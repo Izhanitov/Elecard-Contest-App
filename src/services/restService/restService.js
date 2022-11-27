@@ -4,10 +4,13 @@ export default class RestService {
     }
 
     getData = async (url) => {
-        const res = await fetch(`${this._apiBase}${url}`);
-
+        let  res = {};
+        try {
+            res = await fetch(`${this._apiBase}${url}`);
+        } catch {}
+        
         if (!res.ok) {
-            throw new Error('Could not fetch $(url)');
+            throw new Error(`Could not fetch ${this._apiBase + url}`);
         }
 
         return await res.json();
