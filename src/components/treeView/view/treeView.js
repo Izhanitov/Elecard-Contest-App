@@ -35,9 +35,19 @@ const TreeView = ({data}) => {
         return categories.map(category => {
             const checkExpand = expandList.find(item => item === category);
             return (
-                <CategoryNode categoryName={category} checkExpand={checkExpand} expandFunc={expandNode} thumbnailItems={treeData} callModal={callModal}/>                
+                <CategoryNode key={category} categoryName={category} checkExpand={checkExpand} expandFunc={expandNode} thumbnailItems={treeData} callModal={callModal}/>                
         )})
     }, [treeData, categories, expandList, expandNode, callModal])
+
+    const onClose = useCallback((event) => {
+        if(event.target.className === "btn-close") {
+            setModalProps(undefined);
+        }
+        if(event.target.id === "exampleModal" && event.target.className !== "modal-body text-center" && event.target.className !== "modal-header") {
+            setModalProps(undefined);           
+        }
+    }, [])
+
 
     const renderTree = useCallback(() => {        
         return(
@@ -50,14 +60,16 @@ const TreeView = ({data}) => {
             </div>
 
         )
-     }, [renderChildNode, expandRoot, rootPosition])
+     }, [renderChildNode, expandRoot, rootPosition]) 
 
     return !isLoaded ? <Spinner /> : (
         <>
             {renderTree()}
-            {modalProps && <ImageModal item={modalProps} onClose={() => setModalProps(undefined)} />}
+            {modalProps && <ImageModal item={modalProps} onClose={onClose} />}
         </>
     )
 }
 
 export default TreeView;
+
+//() => setModalProps(undefined)

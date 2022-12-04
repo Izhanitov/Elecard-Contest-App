@@ -14,7 +14,7 @@ const CategoryNode = ({categoryName, thumbnailItems, expandFunc, checkExpand, ca
                 {checkExpand ? 
                     <div className="row ms-2" >
                         {thumbnailItems.filter(item => item.category === categoryName).map(item => {
-                            return (<div className="col"><ThumbnailNode item={item} callModal={callModal}/></div>)
+                            return (<div className="col" key={item.name}><ThumbnailNode item={item} callModal={callModal}/></div>)
                             })}
                     </div> : <></>
                 }
