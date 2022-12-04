@@ -13,8 +13,9 @@ const usePagination = (itemsLength, itemsOnPage) => {
 
     useEffect(() => {    
         const firstItemOnPage = (currentPage - 1) * itemsOnPage;
+        const lastPageItems = itemsLength - firstItemOnPage - 1;
         setFirstIndex(firstItemOnPage);
-        setLastIndex(firstItemOnPage + itemsOnPage - 1);
+        pages == currentPage ? setLastIndex(firstItemOnPage + lastPageItems) : setLastIndex(firstItemOnPage + itemsOnPage - 1);
         
     }, [currentPage, pages, itemsLength, itemsOnPage])
 

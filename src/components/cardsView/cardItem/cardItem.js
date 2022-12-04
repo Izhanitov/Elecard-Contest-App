@@ -8,11 +8,10 @@ const CardItem = ({item, hideCard}) => {
     const renderItem = () => {
         return(
             
-            <div id={`card-item-${item.name}`} className="content-card">                
+            <div id={`card-item-${item.url}`} className="content-card">                
                 <div className="content-card-nav">
-                    <button id={item.name} onClick={hideCard} className="btn-close b bg-light"></button>   
-                </div>
-                                 
+                    <button id={item.url} onClick={hideCard} className="btn-close b bg-light"></button>   
+                </div>                                 
                 <div className="content-card-topside">
                     <img className="d-flex content-card-image"
                             src={`http://contest.elecard.ru/frontend_data/${item.category}/${item.name}`}
@@ -22,33 +21,33 @@ const CardItem = ({item, hideCard}) => {
                 <div className="content-card-attributes">
                     <div className="container">
                         <div className="row">
-                            <div className="col-3">
+                            <div className="col-sm-3 col-xs-12">
                                 Наименование:
                             </div>
-                            <div className="col-9">
+                            <div className="col-sm-9 col-xs-12">
                                 {item.name}
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-3">
+                            <div className="col-sm-3 col-xs-12">
                                 Категория:
                             </div>                        
-                            <div className="col-9">
+                            <div className="col-sm-9 col-xs-12">
                                 {item.category}
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-3">
+                            <div className="col-sm-3 col-xs-12">
                                 Размер:
                             </div>                            
-                            <div className="col-9">
-                                {item.filesize}
+                            <div className="col-sm-9 col-xs-12">
+                                {`${item.filesize} байт`}
                             </div>
                         <div className="row">
-                            <div className="col-3">
+                            <div className="col-sm-3 col-xs-12">
                                 Дата:
                             </div>
-                            <div className="col-9">
+                            <div className="col-sm-9 col-xs-12">
                                 {convertTimeStamp(item.timestamp)}
                             </div>
                         </div>
