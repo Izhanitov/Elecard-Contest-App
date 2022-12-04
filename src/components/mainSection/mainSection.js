@@ -29,7 +29,8 @@ const MainSection = () => {
                     name: image.split('/').pop(),
                     filesize,
                     timestamp,
-                    category
+                    category,
+                    url: image
                 }
             } else {
                 throw new Error("Response does not contain valid data");
@@ -43,7 +44,10 @@ const MainSection = () => {
         restService.getCards()
         .then(createDataSet)
         .then(() => setIsLoaded(true))
-        .catch(setIsError(true));
+        .catch(() => {
+            setIsError(true);
+            setIsLoaded(true);
+        });
     }, [createDataSet, restService])    
 
     const SwitchView = useCallback((event) => {
@@ -57,9 +61,9 @@ const MainSection = () => {
             default:
                 break;                
         }
-    }, [])
+    }, []) 
 
-    return isError ? <ErrorComponent /> : (!isLoaded ? <Spinner /> : (
+    return  !isLoaded ? <Spinner /> : (isError ? <ErrorComponent /> : (
         <>
             <div className="text-center">
                 <input id="card" className="btn-check" name="content-radio" onClick={SwitchView} type="radio" defaultChecked/>
