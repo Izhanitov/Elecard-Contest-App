@@ -10,11 +10,11 @@ const CardItem = ({item, hideCard}) => {
             
             <div id={`card-item-${item.url}`} className="content-card">                
                 <div className="content-card-nav">
-                    <button id={item.url} onClick={hideCard} className="btn-close b bg-light"></button>   
+                    <button id={item.url} onClick={hideCard} className="btn-close bg-light content-card-close-btn"></button>   
                 </div>                                 
                 <div className="content-card-topside">
                     <img className="d-flex content-card-image"
-                            src={`http://contest.elecard.ru/frontend_data/${item.category}/${item.name}`}
+                            src={`http://contest.elecard.ru/frontend_data/${item.url}`}
                             alt={item.name}
                         />
                 </div> 

@@ -4,7 +4,7 @@ const CardsViewPage = ({itemsSet, hideCard}) => {
 	const renderCards = () => {
 		return itemsSet
 			.map((item, i) => (
-                <CardItem key={i + item.name} item={item} hideCard={hideCard} />               
+                <CardItem key={item.url} item={item} hideCard={hideCard} />               
 			));
 	}
 

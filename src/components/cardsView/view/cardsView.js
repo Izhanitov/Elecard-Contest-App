@@ -40,9 +40,7 @@ const CardsView = ({ data }) => {
 
 	const hideCard = useCallback((event) => {
 		const element = document.getElementById(`card-item-${event.target.id}`);
-		console.log(element);
-		console.log(`ID: ${event.target.id}`);
-		const duration = 500;
+		const duration = 350;
 		if (element) {
 			element.animate({opacity: "0",}, { duration, fill: "forwards", }
 		)
