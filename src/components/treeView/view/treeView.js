@@ -58,7 +58,6 @@ const TreeView = ({data}) => {
                 </div>
                 {rootPosition ? renderChildNode() : <></>}
             </div>
-
         )
      }, [renderChildNode, expandRoot, rootPosition]) 
 
@@ -71,5 +70,3 @@ const TreeView = ({data}) => {
 }
 
 export default TreeView;
-
-//() => setModalProps(undefined)

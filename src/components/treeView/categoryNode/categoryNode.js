@@ -9,14 +9,14 @@ const CategoryNode = ({categoryName, thumbnailItems, expandFunc, checkExpand, ca
             <div className="d-block ms-2">                
                 <div className="d-flex">
                     <button className={"tree-button"} id={categoryName} onClick={expandFunc}>{checkExpand ? "-" : "+"}</button>
-                    <div>{categoryName}</div>
+                    <div className="text-capitalize">{categoryName}</div>
                 </div>
-                {checkExpand ? 
-                    <div className="row ms-2" >
+                {checkExpand && 
+                    <div className="ms-4" >
                         {thumbnailItems.filter(item => item.category === categoryName).map(item => {
-                            return (<div className="col" key={item.name}><ThumbnailNode item={item} callModal={callModal}/></div>)
+                            return (<div className="col" key={item.url}><ThumbnailNode item={item} callModal={callModal}/></div>)
                             })}
-                    </div> : <></>
+                    </div> 
                 }
             </div>
         )
